@@ -18,7 +18,7 @@ namespace testVulkan {
 #ifdef WIN32
         m_Extensions.push_back("VK_KHR_win32_surface");
 #else
-        m_Extensions.push_back("VK_HKR_xcb_surface");
+        m_Extensions.push_back("VK_KHR_xcb_surface");
 #endif
 
         VkInstanceCreateInfo createInfo = {};
