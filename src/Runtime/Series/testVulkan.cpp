@@ -39,5 +39,18 @@ namespace testVulkan {
             }
         }
         std::cout << "Compute Physical Device number : " << computeDevice.size() << std::endl;
+        if (computeDevice.empty()) {
+            vulkanInstance->Destroy();
+            throw std::runtime_error("Compute Device is empty!");
+        }
+
+
+        for (auto& device : computeDevice) {
+            auto pdevice = VulkanDevice::Create(device, false, false);
+            if(!pdevice->InitializeVKDevice()) throw std::runtime_error("Initialize vkDevice failed!");
+            if(!pdevice->CalculateDeviceMemoryType()) throw std::runtime_error("Can't get calculate memory type!");
+            if(!pdevice->CalculateImageMemoryType()) throw std::runtime_error("Can't get calculate image memory type!");
+            if(!pdevice->CalculateHostMemoryType()) throw std::runtime_error("Can't get calculate host memory type!");
+        }
     }
 }

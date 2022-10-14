@@ -22,6 +22,8 @@ public:
 
 	bool CreateVkDevice(int graphicQueueFamily);
 
+	bool InitializeVKDevice();
+
 	bool CalculateMemoryType();
 
 	uint32_t GetMemoryType(const uint32_t  typeFilter

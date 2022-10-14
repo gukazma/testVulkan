@@ -182,8 +182,8 @@ int VulkanDevice::GetMemoryType(int nType)
 				{
 					maxHeap = m_memoryProperties.memoryHeaps[heapIndex].size;
 					memoryType = i;
-std::cout<<"memoryType : "<<memoryType<<std::endl;
-std::cout<<"maxHeap : "<<maxHeap<<std::endl;
+					std::cout<<"memoryType : "<<memoryType<<std::endl;
+					std::cout<<"maxHeap : "<<maxHeap<<std::endl;
 				}
 			}
 		}
@@ -213,9 +213,9 @@ bool VulkanDevice::CalculateHostMemoryType()
 	VkMemoryPropertyFlags  flags3 = VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
 	uint32_t  hostTypeBuffer = GetMemoryType(memRequirements.memoryTypeBits, flags1, flags2, flags3);
 	vkDestroyBuffer(m_vkDevice, buffer, NULL);
-    std::cout<<"calculate host memory type0 is : "<<hostTypeBuffer<<std::endl;
+    std::cout<<"calculate host memory buffer type is : "<<hostTypeBuffer<<std::endl;
 	m_hostMemoryType = GetMemoryType(hostTypeBuffer);
-	std::cout<<"calculate host memory type1 is : "<<m_hostMemoryType<<std::endl;
+	std::cout<<"calculate host memory type is : "<<m_hostMemoryType<<std::endl;
 	return true;
 }
 
@@ -337,5 +337,58 @@ bool VulkanDevice::CanUseAsCompute(VkPhysicalDevice const device)
 		return false;
 	}
 
+	return true;
+}
+
+
+bool VulkanDevice::InitializeVKDevice()
+{
+	if (m_vkdeviceInitialized)
+		return true;
+	int graphicQueueFamily = GetGraphicQueueFamily();
+	if (graphicQueueFamily < 0)
+	{
+		std::cout << "Can't find graphics queue family!" << std::endl;
+		return false;
+	}
+	if (!CreateVkDevice(graphicQueueFamily))
+	{
+		std::cout << "create vkdevice failed" << std::endl;
+		return false;
+	}
+	// if (!CreateCommandPool(graphicQueueFamily))
+	// {
+	// 	std::cout << " vkCreateCommandPool failed" << std::endl;
+	// 	return false;
+	// }
+	// if (!CalculateMemoryType())
+	// {
+	// 	std::cout << " Calculate memory Type failed" << std::endl;
+	// 	return false;
+	// }
+
+	CheckImageMemory();
+
+	//host和device上预分配10MB
+	// if (m_deviceBufferMemoryType >= 0)
+	// {
+	// 	VkBufferUsageFlags  usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+	// 	m_uniform_hostBuffer = AllocateMemory(usage, m_hostMemoryType, 10);
+	// 	if (NULL == m_uniform_hostBuffer)
+	// 	{
+	// 		std::cout << "alloc host memory 10MB Failed" << std::endl;
+	// 		return false;
+	// 	}
+
+	// 	usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+	// 	m_uniform_deviceBuffer = AllocateMemory( usage, m_deviceBufferMemoryType, 10);
+	// 	if (NULL == m_uniform_deviceBuffer)
+	// 	{
+	// 		std::cout << "alloc device memory 10MB Failed" << std::endl;
+	// 		return false;
+	// 	}
+	// }
+
+	m_vkdeviceInitialized = true;
 	return true;
 }
