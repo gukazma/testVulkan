@@ -1,13 +1,9 @@
 #include "VulkanInstance.h"
+#include <iostream>
 #include <stdexcept>
 #include <vulkan/vulkan_core.h>
 
 namespace testVulkan {
-    VulkanInstace* VulkanInstace::Create()
-    {
-        auto rnt = new VulkanInstace();
-        return rnt;
-    }
 
     VulkanInstace::VulkanInstace()
     {
@@ -18,6 +14,7 @@ namespace testVulkan {
         appInfo.pEngineName = "Vulkan for GPU";
         appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
         appInfo.apiVersion = VK_API_VERSION_1_0;
+        m_Extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
 #ifdef WIN32
         m_Extensions.push_back("VK_KHR_win32_surface");
 #else
@@ -37,5 +34,16 @@ namespace testVulkan {
         if (result != VK_SUCCESS) {
             throw std::runtime_error("failed to create instance!");
         }
+    }
+    void VulkanInstace::Destroy()
+    {
+        if (m_VulkanInstance != VK_NULL_HANDLE) {
+            vkDestroyInstance(m_VulkanInstance, NULL);
+        }
+    }
+
+    VulkanInstace::~VulkanInstace()
+    {
+        Destroy();
     }
 }

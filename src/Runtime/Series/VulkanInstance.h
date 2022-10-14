@@ -4,14 +4,12 @@ namespace testVulkan {
     class VulkanInstace
     {
     public:
-        static VulkanInstace* Create();
+        VulkanInstace();
+        ~VulkanInstace();
 
-    private:
+        void Destroy();
         std::vector<const char*> m_ValidationLayers;
         std::vector<const char*> m_Extensions;
-        VkInstance m_VulkanInstance;
-        VulkanInstace();
-
-        ~VulkanInstace();
+        VkInstance m_VulkanInstance = VK_NULL_HANDLE;
     };
 }

@@ -1,7 +1,10 @@
 ﻿#include "VulkanDevice.h"
+#include <stdint.h>
 #include <string.h>
 #include <iostream>
 #include <algorithm>
+#include <vector>
+#include <vulkan/vulkan_core.h>
 VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice)
 	:m_vkDevice(VK_NULL_HANDLE), m_graphicsQueue(VK_NULL_HANDLE), m_imageMemoryNeedRealloc(false)
 	, m_vkdeviceInitialized(false), m_physicalDevice(physicalDevice)
@@ -301,4 +304,38 @@ void VulkanDevice::CheckImageMemory()
 			m_imageMemoryNeedRealloc = true;
 		}
 	}
+}
+
+bool VulkanDevice::CanUseAsCompute(VkPhysicalDevice const device)
+{
+	uint32_t queueFamilyCount = 0;
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, VK_NULL_HANDLE);
+
+	std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyCount);
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilyProperties.data());
+
+	bool bHasQueueGraphicsBit = false;
+	for (auto const & queueFamilyProperty : queueFamilyProperties) {
+		if (queueFamilyProperty.queueCount > 0 && queueFamilyProperty.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+			bHasQueueGraphicsBit = true;
+			break;
+		}
+	}
+
+	if (!bHasQueueGraphicsBit) {
+		return false;
+	}
+
+	VkPhysicalDeviceProperties deviceProperties;
+	vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+	if (deviceProperties.vendorID != 0x10de && deviceProperties.vendorID != 0x1002) {
+		return false;
+	}
+
+	if (deviceProperties.apiVersion < VK_MAKE_VERSION(1, 0, 37)) {
+		return false;
+	}
+
+	return true;
 }

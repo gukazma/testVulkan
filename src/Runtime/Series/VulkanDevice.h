@@ -14,6 +14,8 @@ protected:
 	~VulkanDevice();
 public:
 	static VulkanDevice* Create(VkPhysicalDevice, bool enableSurface,bool hasEnabledValidationLayers);
+
+	static bool CanUseAsCompute(VkPhysicalDevice const device);
 	bool Init(bool bEnableSurface);
 	void Destroy();
 	int GetGraphicQueueFamily();
