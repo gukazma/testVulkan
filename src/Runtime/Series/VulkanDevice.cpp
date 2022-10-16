@@ -1,4 +1,5 @@
 ﻿#include "VulkanDevice.h"
+#include <stdexcept>
 #include <stdint.h>
 #include <string.h>
 #include <iostream>
@@ -313,7 +314,6 @@ bool VulkanDevice::CanUseAsCompute(VkPhysicalDevice const device)
 
 	std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyCount);
 	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilyProperties.data());
-
 	bool bHasQueueGraphicsBit = false;
 	for (auto const & queueFamilyProperty : queueFamilyProperties) {
 		if (queueFamilyProperty.queueCount > 0 && queueFamilyProperty.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
@@ -323,6 +323,7 @@ bool VulkanDevice::CanUseAsCompute(VkPhysicalDevice const device)
 	}
 
 	if (!bHasQueueGraphicsBit) {
+		throw std::runtime_error("Has no QueueGraphicsBit!");
 		return false;
 	}
 
@@ -330,10 +331,12 @@ bool VulkanDevice::CanUseAsCompute(VkPhysicalDevice const device)
 	vkGetPhysicalDeviceProperties(device, &deviceProperties);
 
 	if (deviceProperties.vendorID != 0x10de && deviceProperties.vendorID != 0x1002) {
+		throw std::runtime_error("vendorID != 0x10de && vendorID != 0x1002");
 		return false;
 	}
 
 	if (deviceProperties.apiVersion < VK_MAKE_VERSION(1, 0, 37)) {
+		throw std::runtime_error(".apiVersion < VK_MAKE_VERSION(1, 0, 37");
 		return false;
 	}
 
