@@ -329,7 +329,8 @@ bool VulkanDevice::CanUseAsCompute(VkPhysicalDevice const device)
 
 	VkPhysicalDeviceProperties deviceProperties;
 	vkGetPhysicalDeviceProperties(device, &deviceProperties);
-
+	
+	std::cout << "Device Name: " << deviceProperties.deviceName  << std::endl;
 	if (deviceProperties.vendorID != 0x10de && deviceProperties.vendorID != 0x1002) {
 		throw std::runtime_error("vendorID != 0x10de && vendorID != 0x1002");
 		return false;
