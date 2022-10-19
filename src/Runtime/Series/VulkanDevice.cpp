@@ -213,9 +213,23 @@ bool VulkanDevice::CalculateHostMemoryType()
 	VkMemoryPropertyFlags  flags2 = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
 	VkMemoryPropertyFlags  flags3 = VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
 	uint32_t  hostTypeBuffer = GetMemoryType(memRequirements.memoryTypeBits, flags1, flags2, flags3);
+	if (hostTypeBuffer == 0) {
+		throw std::runtime_error(R"(
+hostTypeBuffer == 0
+VkMemoryPropertyFlags  flags1 = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+VkMemoryPropertyFlags  flags2 = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+VkMemoryPropertyFlags  flags3 = VK_MEMORY_PROPERTY_HOST_CACHED_BIT; 
+		)");
+	}
 	vkDestroyBuffer(m_vkDevice, buffer, NULL);
     std::cout<<"calculate host memory buffer type is : "<<hostTypeBuffer<<std::endl;
 	m_hostMemoryType = GetMemoryType(hostTypeBuffer);
+	if (m_hostMemoryType == -1) {
+		throw std::runtime_error(R"(
+m_hostMemoryType == -1
+all memory size ==0;
+		)");
+	}
 	std::cout<<"calculate host memory type is : "<<m_hostMemoryType<<std::endl;
 	return true;
 }
@@ -243,9 +257,23 @@ bool VulkanDevice::CalculateDeviceMemoryType()
 	VkMemoryPropertyFlags  flags2 = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 	VkMemoryPropertyFlags  flags3 = 0;
 	uint32_t deviceTypeBuffer = GetMemoryType(memRequirements.memoryTypeBits, flags1, flags2, flags3);
+	if (deviceTypeBuffer == 0) {
+		throw std::runtime_error(R"(
+hostTypeBuffer == 0
+VkMemoryPropertyFlags  flags1 = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+VkMemoryPropertyFlags  flags2 = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+VkMemoryPropertyFlags  flags3 = 0;
+		)");
+	}
 	vkDestroyBuffer(m_vkDevice, buffer, NULL);
 
 	m_deviceBufferMemoryType = GetMemoryType(deviceTypeBuffer);
+	if (m_deviceBufferMemoryType == -1) {
+		throw std::runtime_error(R"(
+m_deviceBufferMemoryType == -1
+all memory size ==0;
+		)");
+	}
 	 // 如果是摩尔gpu
 	if (strstr(m_deviceProperties.deviceName, "MUSA") != NULL)  
 	{
@@ -285,6 +313,14 @@ bool VulkanDevice::CalculateImageMemoryType()
 	VkMemoryPropertyFlags  flags2 = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 	VkMemoryPropertyFlags  flags3 = 0;
 	uint32_t deviceTypeImage = GetMemoryType(memRequirements.memoryTypeBits, flags1, flags2, flags3);
+	if (deviceTypeImage == 0) {
+		throw std::runtime_error(R"(
+deviceTypeImage == 0
+VkMemoryPropertyFlags  flags1 = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+VkMemoryPropertyFlags  flags2 = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+VkMemoryPropertyFlags  flags3 = 0;
+		)");
+	}
 	vkDestroyImage(m_vkDevice, image, NULL);
 	m_deviceImageMemoryType = GetMemoryType(deviceTypeImage);
 	
