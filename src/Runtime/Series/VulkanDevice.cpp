@@ -266,7 +266,7 @@ VkMemoryPropertyFlags  flags3 = 0;
 		)");
 	}
 	vkDestroyBuffer(m_vkDevice, buffer, NULL);
-
+	std::cout << "deviceTypeBuffer:" << deviceTypeBuffer << std::endl;
 	m_deviceBufferMemoryType = GetMemoryType(deviceTypeBuffer);
 	if (m_deviceBufferMemoryType == -1) {
 		throw std::runtime_error(R"(
@@ -321,6 +321,7 @@ VkMemoryPropertyFlags  flags2 = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 VkMemoryPropertyFlags  flags3 = 0;
 		)");
 	}
+	std::cout << "deviceTypeImage: "<< deviceTypeImage << std::endl;
 	vkDestroyImage(m_vkDevice, image, NULL);
 	m_deviceImageMemoryType = GetMemoryType(deviceTypeImage);
 	
