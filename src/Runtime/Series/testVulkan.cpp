@@ -44,13 +44,57 @@ namespace testVulkan {
             throw std::runtime_error("Compute Device is empty!");
         }
 
-
+        VulkanDevice* testDevice;
         for (auto& device : computeDevice) {
             auto pdevice = VulkanDevice::Create(device, false, false);
+            testDevice = pdevice;
             if(!pdevice->InitializeVKDevice()) throw std::runtime_error("Initialize vkDevice failed!");
             if(!pdevice->CalculateDeviceMemoryType()) throw std::runtime_error("Can't get calculate memory type!");
             if(!pdevice->CalculateImageMemoryType()) throw std::runtime_error("Can't get calculate image memory type!");
             if(!pdevice->CalculateHostMemoryType()) throw std::runtime_error("Can't get calculate host memory type!");
         }
+
+        int m_size = 1073741824;
+        VkBufferUsageFlags usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+        VkBuffer m_vkBuffer;
+        VkDeviceMemory m_vkDeviceMemory;
+        int m_offset = 0;
+        VkMemoryAllocateInfo allocInfo = {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.pNext = NULL;
+        allocInfo.allocationSize = m_size;
+        allocInfo.memoryTypeIndex = testDevice->m_hostMemoryType;
+
+        VkResult nErr = vkAllocateMemory(testDevice->m_vkDevice, &allocInfo, nullptr, &m_vkDeviceMemory);
+        if (nErr != VK_SUCCESS)
+        {
+            throw std::runtime_error("vkAllocateMemory failed!");
+        }
+
+        VkBufferCreateInfo bufferInfo = {};
+        bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        bufferInfo.size = m_size;
+        bufferInfo.pNext = NULL;
+        bufferInfo.flags = 0;
+        bufferInfo.queueFamilyIndexCount = 0;
+        bufferInfo.pQueueFamilyIndices = NULL;
+        bufferInfo.usage = usageFlags;
+
+        bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        nErr = vkCreateBuffer(testDevice->m_vkDevice, &bufferInfo, nullptr, &m_vkBuffer);
+        if (nErr != VK_SUCCESS)
+        {
+            throw std::runtime_error("vkCreateBuffer failed!");
+        }
+
+        VkMemoryRequirements memRequirements;
+        vkGetBufferMemoryRequirements(testDevice->m_vkDevice, m_vkBuffer, &memRequirements);
+
+        nErr = vkBindBufferMemory(testDevice->m_vkDevice, m_vkBuffer, m_vkDeviceMemory, m_offset);
+        if (nErr != VK_SUCCESS)
+        {
+            throw std::runtime_error("vkAllocateMemory failed!");
+        }
+
     }
 }

@@ -40,7 +40,7 @@ public:
 	int GetMemoryType(int nType);
 	void CheckImageMemory();
 
-private:
+public:
 	VkPhysicalDevice m_physicalDevice;
 	VkPhysicalDeviceProperties m_deviceProperties;
 	VkPhysicalDeviceFeatures m_deviceFeatures;
