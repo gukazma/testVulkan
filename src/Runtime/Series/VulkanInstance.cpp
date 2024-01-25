@@ -11,7 +11,7 @@ namespace testVulkan {
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
         appInfo.pApplicationName = "Vulkan";
         appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.pEngineName = "Vulkan for GPU";
+        appInfo.pEngineName = "Smart3D MVS Vulkan Engine";
         appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
         appInfo.apiVersion = VK_API_VERSION_1_0;
         m_Extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);

@@ -12,7 +12,7 @@ namespace testVulkan {
     void testVulkan()
     {
         testVulkan::VulkanInstace* vulkanInstance = new testVulkan::VulkanInstace();
-
+        std::cout << "test!!!!!!!!!!!!!!!!!!!" << std::endl;
         uint32_t deviceCount = 0;
         if (vulkanInstance->m_VulkanInstance == nullptr) {
             std::cout << "vulkan is nullptr" << std::endl;
@@ -95,6 +95,40 @@ namespace testVulkan {
         {
             throw std::runtime_error("vkAllocateMemory failed!");
         }
+
+        uint64_t memorySize1,memorySize2; 
+        memorySize1 = 1500;
+        // memorySize1 = memorySize1 << 20;
+        std::cout << "[Info] Input Memory Size:";
+        
+        std::cin >> memorySize1;
+        memorySize1 = memorySize1 << 20;
+        memorySize2 = 1500;
+        memorySize2 = memorySize2 << 20;
+        VkMemoryAllocateInfo allocInfo_image1 = {};
+        allocInfo_image1.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo_image1.pNext = NULL;
+        allocInfo_image1.allocationSize = memorySize1;
+        allocInfo_image1.memoryTypeIndex = 2;
+
+        VkMemoryAllocateInfo allocInfo_image2 = {};
+        allocInfo_image2.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo_image2.pNext = NULL;
+        allocInfo_image2.allocationSize = 1500 << 20;
+        allocInfo_image2.memoryTypeIndex = 2;
+
+        VkDeviceMemory m_memoryBlocks1;
+        VkDeviceMemory m_memoryBlocks2;
+        nErr = vkAllocateMemory(testDevice->m_vkDevice, &allocInfo_image1, nullptr, &m_memoryBlocks1);
+        if (nErr != VK_SUCCESS)
+        {
+            throw std::runtime_error("1111111111111111vkAllocateMemory failed!!!!!");
+        }
+        // nErr = vkAllocateMemory(testDevice->m_vkDevice, &allocInfo_image2, nullptr, &m_memoryBlocks2);
+        // if (nErr != VK_SUCCESS)
+        // {
+        //     throw std::runtime_error("22222222222222222vkAllocateMemory failed!!!!!");
+        // }
 
     }
 }
